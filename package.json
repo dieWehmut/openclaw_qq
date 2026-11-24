@@ -19,6 +19,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json --noCheck",
+    "test": "npm run build && node tools/verify-forward-30.cjs . && node scripts/qq-thinking-notice-repro.mjs",
     "prepack": "npm run build"
   },
   "dependencies": {
