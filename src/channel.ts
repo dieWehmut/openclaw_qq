@@ -5692,7 +5692,7 @@ ${current}
                     let currentRunState: { isStale: () => boolean } | null = null;
                     let autoReactDispatched = false;
                     const forwardThreshold = Number(config.forwardLongReplyThreshold ?? 0);
-                    const canUseMergedForward = !isGuild && !isGroup && Number.isFinite(forwardThreshold) && forwardThreshold > 0;
+                    const canUseMergedForward = !isGuild && Number.isFinite(forwardThreshold) && forwardThreshold > 0;
                     const unknownBlockBoundaryThreshold = Number.isFinite(forwardThreshold) && forwardThreshold > 0 ? forwardThreshold : 300;
                     const unknownBlockMergeWindowMs = 350;
                     const bufferedFinalTexts: string[] = [];
@@ -5800,7 +5800,7 @@ ${current}
 
                     const sendProcessedText = async (processed: string): Promise<boolean> => {
                         if (currentRunState?.isStale()) return false;
-                        if (canUseMergedForward && processed.length >= forwardThreshold) {
+                        if (canUseMergedForward && processed.length > forwardThreshold) {
                             const sentAsForward = await sendLongTextAsForwardMessage({
                                 client,
                                 groupId: isGroup ? groupId : undefined,
@@ -5853,7 +5853,7 @@ ${current}
                         meta: { phaseLabel: string; reason?: string },
                     ): Promise<boolean> => {
                         if (currentRunState?.isStale() || texts.length === 0) return false;
-                        if (canUseMergedForward && totalLen >= forwardThreshold) {
+                        if (canUseMergedForward && totalLen > forwardThreshold) {
                             const sentAsForward = await sendLongTextAsForwardMessage({
                                 client,
                                 groupId: isGroup ? groupId : undefined,
