@@ -52,7 +52,7 @@ const code = `(() => {
   };
 })()`;
 const executable = new vm.Script(stripTypeScriptTypes(code, {
-  mode: 'transform', sourceUrl: 'installed-qq-delivery-replay.ts',
+  mode: 'strip', sourceUrl: 'installed-qq-delivery-replay.ts',
 }));
 
 function fixture(group, rejectForward = false) {
