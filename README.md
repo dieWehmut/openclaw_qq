@@ -177,6 +177,26 @@ cd ../..
 pnpm install && pnpm build
 ```
 
+### 2.1 使用发布 tarball 安装（OpenClaw 2026.6.11–2026.11.x）
+
+仓库内构建并生成可发布包：
+
+```bash
+npm install
+npm test
+npm pack
+```
+
+然后安装到 OpenClaw（`npm-pack:` 必须指向网关主机上的 tarball）：
+
+```bash
+openclaw plugins install npm-pack:/path/to/openclaw-qq-1.0.0.tgz --force
+openclaw plugins list
+openclaw gateway restart
+```
+
+`prepack` 会自动执行构建；发布包通过 `openclaw.runtimeExtensions` 加载 `dist/index.js`，因此 tarball 必须包含 `dist/index.js` 与 `dist/src/*.js`。
+
 ### 3. 优先使用 WebUI 配置（推荐）
 
 在 OpenClaw WebUI 中直接配置 `channels.qq`，比手写 JSON 更直观，也更不容易出现格式错误。
