@@ -228,6 +228,7 @@ openclaw gateway restart
 
 - 文档中心：`docs/index.md`
 - 中文主文档：本 `README.md`
+- 可选配套：`docs/sub2api-model-sync.md`（让模型跟随 Sub2API 分组自动切换）
 
 ## 反馈与贡献
 
