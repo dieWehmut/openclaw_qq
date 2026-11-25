@@ -7,5 +7,361 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {}
+  },
+  "channelConfigs": {
+    "qq": {
+      "label": "QQ (OneBot)",
+      "description": "QQ channel via OneBot v11 WebSocket.",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "wsUrl": {
+            "description": "OneBot WebSocket 地址。示例：ws://127.0.0.1:3001",
+            "type": "string",
+            "format": "uri"
+          },
+          "accessToken": {
+            "description": "OneBot 访问令牌（Token）。需与 NapCat/OneBot 配置一致。",
+            "type": "string"
+          },
+          "admins": {
+            "description": "管理员QQ号（字符串）。Web表单直接填：10000001,123456789；Raw JSON 填：\"10000001,123456789\"。",
+            "default": "",
+            "type": "string"
+          },
+          "requireMention": {
+            "description": "群聊触发门槛（含命令）。true=仅在被@/回复机器人/命中关键词时触发；若同时开启 keywordOnlyTrigger，则群聊只认关键词。false=群内普通消息与命令都可能触发（容易被刷，谨慎关闭）。",
+            "default": true,
+            "type": "boolean"
+          },
+          "systemPrompt": {
+            "description": "系统提示词。示例：你是一个高效、礼貌的助理。",
+            "type": "string"
+          },
+          "enableDeduplication": {
+            "description": "启用消息去重，避免重复回复。",
+            "default": true,
+            "type": "boolean"
+          },
+          "enableErrorNotify": {
+            "description": "调用失败时是否给用户提示。",
+            "default": true,
+            "type": "boolean"
+          },
+          "errorReplyFallbackText": {
+            "description": "调用失败时发送给 QQ 用户的简短兜底文案。",
+            "default": "这边没拿到结果，重发一次",
+            "type": "string"
+          },
+          "adminOnlyChat": {
+            "description": "仅管理员可触发聊天（防盗刷推荐开启）。",
+            "default": false,
+            "type": "boolean"
+          },
+          "notifyNonAdminBlocked": {
+            "description": "启用管理员模式后，是否提示非管理员“无权限”。",
+            "default": false,
+            "type": "boolean"
+          },
+          "nonAdminBlockedMessage": {
+            "description": "非管理员被拦截时的提示文案。",
+            "default": "当前仅管理员可触发机器人。\n如需使用请联系管理员。",
+            "type": "string"
+          },
+          "blockedNotifyCooldownMs": {
+            "description": "非管理员拦截提示防抖时长（毫秒）。10秒可填 10000。",
+            "default": 10000,
+            "type": "number"
+          },
+          "enableEmptyReplyFallback": {
+            "description": "空回复兜底开关。开启后，若模型返回空内容，会自动给出提示，避免群里看起来像无响应。",
+            "default": true,
+            "type": "boolean"
+          },
+          "emptyReplyFallbackText": {
+            "description": "空回复兜底文案。示例：⚠️ 本轮模型返回空内容，请 /newsession 后重试。",
+            "default": "⚠️ 本轮模型返回空内容。请重试，或先执行 /newsession 后再试。",
+            "type": "string"
+          },
+          "maxRetries": {
+            "description": "模型请求失败或返回空回复时的最大自动重试次数。默认 0（关闭自动重试）。",
+            "default": 0,
+            "type": "number"
+          },
+          "retryDelayMs": {
+            "description": "自动重试之间的间隔时间（毫秒，默认 3000；仅在 maxRetries > 0 时生效）。",
+            "default": 3000,
+            "type": "number"
+          },
+          "fastFailErrors": {
+            "default": [],
+            "description": "快速跳过错误关键词列表。默认空数组（关闭）；填写如 401、Unauthorized、余额不足 后，命中时会直接跳过当前模型。",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "groupAutoReact": {
+            "description": "群聊随机贴表情。开启后，仅当本 bot 实际回复了这条群消息时，按概率调用 NapCat set_msg_emoji_like。",
+            "default": false,
+            "type": "boolean"
+          },
+          "groupAutoReactProbability": {
+            "description": "群聊随机贴表情概率，0=不随机贴，1=每次回复都贴。默认 0.2。",
+            "default": 0.2,
+            "type": "number"
+          },
+          "groupAutoReactEmojiIds": {
+            "description": "群聊随机贴表情池，填写 QQ emoji_id 列表，用逗号或空格分隔。默认包含当前 NapCat QQ 表情全集。",
+            "default": "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,41,42,43,46,49,53,55,56,59,60,63,64,66,67,74,75,76,77,78,79,85,86,89,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,114,116,118,119,120,121,122,123,124,125,129,137,144,146,147,148,169,171,172,173,174,175,176,177,178,179,180,181,182,183,185,187,193,194,198,200,201,202,203,204,206,210,211,212,214,215,216,217,218,219,221,222,223,224,225,226,227,229,230,231,232,233,235,237,238,239,240,241,243,244,262,263,264,265,266,267,268,269,270,271,272,273,277,278,281,282,283,284,285,286,287,288,289,290,292,293,294,295,297,298,299,300,301,302,303,305,306,307,311,312,314,317,318,319,320,322,323,324,325,326,332,333,334,336,337,338,339,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,415,416,417,419,420,421,422,423,424,425,426,427,428,429,430,431,432",
+            "type": "string"
+          },
+          "groupAutoReactEmojiId": {
+            "description": "兼容旧配置：自动贴表情使用的单个 QQ emoji_id；当 groupAutoReactEmojiIds 为空时使用。",
+            "default": "76",
+            "type": "string"
+          },
+          "showProcessingStatus": {
+            "description": "忙碌状态可视化开关（默认开启）。开启后，机器人在群里处理任务时会临时把自己的群名片改成“(输入中)”后缀。",
+            "default": true,
+            "type": "boolean"
+          },
+          "showReplySessionSource": {
+            "description": "是否在每次面向用户的回复前附加来源会话标记，例如 `（来自会话写方案）` 或 `（来自主会话）`。默认开启；使用 /临时 功能区分上下文时尤其有用。",
+            "default": true,
+            "type": "boolean"
+          },
+          "processingStatusDelayMs": {
+            "description": "触发“输入中”群名片后缀的延迟（毫秒，默认 500）。",
+            "default": 500,
+            "type": "number"
+          },
+          "processingStatusIntervalMs": {
+            "description": "保留字段（当前未使用）。",
+            "default": 0,
+            "type": "number"
+          },
+          "processingStatusText": {
+            "description": "忙碌后缀文本（默认“输入中”）。示例：输入中。",
+            "default": "输入中",
+            "type": "string"
+          },
+          "processingPulseText": {
+            "description": "保留字段（当前未使用）。",
+            "default": "",
+            "type": "string"
+          },
+          "autoApproveRequests": {
+            "description": "自动通过好友申请/群邀请。",
+            "default": false,
+            "type": "boolean"
+          },
+          "maxMessageLength": {
+            "description": "单条消息最大长度，超出后自动分段发送。",
+            "default": 4000,
+            "type": "number"
+          },
+          "messageFont": {
+            "description": "OneBot 发送消息 font 参数。默认 0=不显式设置，保留 OneBot/NapCat 默认行为；若你的 OneBot 支持 QQ 字体编号，可填对应数字并会同时用于群聊和私聊。",
+            "default": 0,
+            "type": "number"
+          },
+          "formatMarkdown": {
+            "description": "把 Markdown 转纯文本，QQ 显示更清晰。",
+            "default": false,
+            "type": "boolean"
+          },
+          "antiRiskMode": {
+            "description": "风控规避模式（例如处理 URL 发送样式）。",
+            "default": false,
+            "type": "boolean"
+          },
+          "allowedGroups": {
+            "description": "允许响应的群号白名单（字符串）。Web表单填：20000001 123456789；Raw JSON 填：\"20000001 123456789\"。",
+            "default": "",
+            "type": "string"
+          },
+          "blockedUsers": {
+            "description": "用户黑名单QQ号（字符串）。Web表单填：30000001 或 30000001,10002；Raw JSON 填：\"30000001\"。",
+            "default": "",
+            "type": "string"
+          },
+          "historyLimit": {
+            "description": "群历史注入条数。默认0（推荐，依赖会话系统）；需强保留原文时可设 3~5。",
+            "default": 0,
+            "type": "number"
+          },
+          "conversationContextLimit": {
+            "description": "QQ 插件内近期上下文注入条数。默认10；即使群聊开启每条消息独立会话，也会把同一群/私聊最近消息给模型。设 0 可关闭。",
+            "default": 10,
+            "type": "number"
+          },
+          "conversationContextMaxChars": {
+            "description": "QQ 插件内近期上下文最大字符数。默认2400，过长会优先保留最新消息。",
+            "default": 2400,
+            "type": "number"
+          },
+          "includeRecalledMessagesInContext": {
+            "description": "撤回消息是否继续作为上下文注入。默认开启；已缓存的撤回消息会标记为 [已撤回]。",
+            "default": true,
+            "type": "boolean"
+          },
+          "keywordOnlyTrigger": {
+            "description": "群聊仅关键词触发开关。开启后，@机器人/回复机器人消息不再触发；建议配合 keywordTriggers 一起使用。适合与其他机器人共用同一 QQ 账号时避免双重回复。",
+            "default": false,
+            "type": "boolean"
+          },
+          "keywordTriggers": {
+            "description": "关键词触发（字符串）。Web表单填：小助手, 帮我；Raw JSON 填：\"小助手, 帮我\"。当 requireMention=true 时，命中关键词可不@直接触发；当 requireMention=false 时，关键词不是必需条件；当 keywordOnlyTrigger=true 时，群聊里只有命中这些关键词才会触发。",
+            "default": "",
+            "type": "string"
+          },
+          "allowBareGroupCommands": {
+            "description": "群聊里是否允许只发 /model 这类裸 slash 指令就直接触发。默认关闭；关闭后需配合关键词触发，例如“椰子 /model”。",
+            "default": false,
+            "type": "boolean"
+          },
+          "enableDynamicModelCatalog": {
+            "description": "是否让本地 /model 列表主动探测各 provider 的 /models 并展示全量模型。默认关闭，保持更接近原版 OpenClaw 的 /model；如需动态聚合模型目录再手动开启。",
+            "default": false,
+            "type": "boolean"
+          },
+          "enableTTS": {
+            "description": "是否启用语音回复（依赖 OneBot 服务端支持）。",
+            "default": false,
+            "type": "boolean"
+          },
+          "sharedMediaHostDir": {
+            "description": "可选：宿主机共享媒体目录（供 NapCat 容器访问）。示例：/Users/xxx/openclaw_qq/deploy/napcat/shared_media。",
+            "default": "",
+            "type": "string"
+          },
+          "sharedMediaContainerDir": {
+            "description": "可选：共享目录在 NapCat 容器内的挂载路径。默认 /openclaw_media。",
+            "default": "/openclaw_media",
+            "type": "string"
+          },
+          "enableGuilds": {
+            "description": "是否启用 QQ 频道（Guild）支持。",
+            "default": true,
+            "type": "boolean"
+          },
+          "enrichReplyForwardContext": {
+            "description": "是否递归解析 reply/forward 并注入多层上下文。默认开启。",
+            "default": true,
+            "type": "boolean"
+          },
+          "cacheInboundImagesToLocal": {
+            "description": "是否将当前消息以及引用/转发上下文里识别到的图片缓存到本地 MediaPaths。默认开启，便于 ACP 与多模态 agent 实际读图；关闭后仅保留 URL 提示，部分 agent 可能只能看到文字。",
+            "default": true,
+            "type": "boolean"
+          },
+          "blockStreaming": {
+            "description": "是否按 assistant message 分块发送回复。默认开启，推荐配合 message_end，让 commentary/final 按完整消息落地。",
+            "default": true,
+            "type": "boolean"
+          },
+          "blockStreamingBreak": {
+            "description": "分块发送的边界。默认 message_end：等单条 assistant message 完整生成后再发，更适合 QQ 群聊。",
+            "default": "message_end",
+            "type": "string",
+            "enum": [
+              "text_end",
+              "message_end"
+            ]
+          },
+          "maxReplyLayers": {
+            "description": "reply 最大递归层数。默认 5。",
+            "default": 5,
+            "type": "number"
+          },
+          "maxForwardLayers": {
+            "description": "forward 最大递归层数。默认 5。",
+            "default": 5,
+            "type": "number"
+          },
+          "maxForwardMessagesPerLayer": {
+            "description": "每层 forward 最多展开多少条子消息。默认 8。",
+            "default": 8,
+            "type": "number"
+          },
+          "maxCharsPerLayer": {
+            "description": "每层注入文本最大字符数。默认 900。",
+            "default": 900,
+            "type": "number"
+          },
+          "maxTotalContextChars": {
+            "description": "reply/forward 总注入字符上限。默认 3000。",
+            "default": 3000,
+            "type": "number"
+          },
+          "includeSenderInLayers": {
+            "description": "层级上下文里是否包含发送者昵称/ID。",
+            "default": true,
+            "type": "boolean"
+          },
+          "includeCurrentOutline": {
+            "description": "是否注入当前消息概要层。",
+            "default": true,
+            "type": "boolean"
+          },
+          "rateLimitMs": {
+            "description": "多段消息发送间隔（毫秒）。建议 1000。",
+            "default": 1000,
+            "type": "number"
+          },
+          "enableQueueNotify": {
+            "description": "当消息进入防抖合并队列时，是否发送提示（由于已经是静默合并，建议设为false或保持默认）。",
+            "default": true,
+            "type": "boolean"
+          },
+          "queueDebounceMs": {
+            "description": "连续消息合并防抖等待时间（毫秒，默认 0=关闭；大于 0 时才会开启明显的消息合并窗口）。",
+            "default": 0,
+            "type": "number"
+          },
+          "groupPerMessageSessions": {
+            "description": "群聊普通消息是否每条使用独立回复会话。开启后可并发回复连续消息，避免同一群长期会话初始化锁导致卡顿；命令和临时会话仍使用稳定会话。",
+            "default": false,
+            "type": "boolean"
+          },
+          "injectGatewayMeta": {
+            "description": "是否在系统提示前注入隐藏 QQ 网关元数据（会话来源、触发方式、会话标签等）。默认关闭。",
+            "default": false,
+            "type": "boolean"
+          },
+          "interruptOnNewMessage": {
+            "description": "同会话新消息到达时，是否中断上一轮回复并优先处理最新请求。默认关闭。",
+            "default": false,
+            "type": "boolean"
+          },
+          "dispatchTimeoutMs": {
+            "description": "单轮 QQ 回复处理超时时间（毫秒，默认 180000）。超时后旧任务标记过期并释放同会话队列，避免群聊被长工具调用卡住；0=关闭。",
+            "default": 180000,
+            "type": "number"
+          },
+          "forwardLongReplyThreshold": {
+            "description": "回复自动转为 QQ 聊天记录的字符数阈值。严格超过阈值时转发，群聊和私聊均适用；默认 300。",
+            "default": 300,
+            "type": "number"
+          },
+          "forwardNodeCharLimit": {
+            "description": "启用长回复合并转发时，每个转发节点的最大字符数。默认 0，表示不按长度拆节点；同一轮回复的多条 assistant message 会尽量合并进一个转发。",
+            "default": 0,
+            "type": "number"
+          },
+          "forwardNodeName": {
+            "description": "启用长回复合并转发时，节点显示昵称。默认 OpenClaw。",
+            "default": "OpenClaw",
+            "type": "string"
+          }
+        },
+        "required": [
+          "wsUrl"
+        ],
+        "additionalProperties": {}
+      }
+    }
   }
 }
