@@ -161,7 +161,7 @@ export const QQConfigSchema = z.object({
   injectGatewayMeta: BooleanInputSchema(false).describe("是否在系统提示前注入隐藏 QQ 网关元数据（会话来源、触发方式、会话标签等）。默认关闭。"),
   interruptOnNewMessage: BooleanInputSchema(false).describe("同会话新消息到达时，是否中断上一轮回复并优先处理最新请求。默认关闭。"),
   dispatchTimeoutMs: NumberInputSchema(180000).describe("单轮 QQ 回复处理超时时间（毫秒，默认 180000）。超时后旧任务标记过期并释放同会话队列，避免群聊被长工具调用卡住；0=关闭。"),
-  forwardLongReplyThreshold: NumberInputSchema(300).describe("final_answer 长回复自动转为 QQ 合并转发的阈值（字符数）。默认 300；commentary 仍按普通消息发送。"),
+  forwardLongReplyThreshold: NumberInputSchema(300).describe("回复自动转为 QQ 聊天记录的字符数阈值。严格超过阈值时转发，群聊和私聊均适用；默认 300。"),
   forwardNodeCharLimit: NumberInputSchema(0).describe("启用长回复合并转发时，每个转发节点的最大字符数。默认 0，表示不按长度拆节点；同一轮回复的多条 assistant message 会尽量合并进一个转发。"),
   forwardNodeName: z.preprocess((value) => normalizeLooseString(value), z.string().optional().default("OpenClaw")).describe("启用长回复合并转发时，节点显示昵称。默认 OpenClaw。"),
 }).passthrough();

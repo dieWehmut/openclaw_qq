@@ -16,7 +16,7 @@ import {
     type ReplyPayload,
     applyAccountNameToChannelSection,
     migrateBaseNameToDefaultAccount,
-} from "openclaw/plugin-sdk";
+} from "openclaw/plugin-sdk/core";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
 import { jsonResult } from "openclaw/plugin-sdk/channel-actions";
 import { OneBotClient } from "./client.js";
@@ -3821,6 +3821,8 @@ function resolveReplyPayloadPhase(payload: any): "commentary" | "final_answer" |
 function isInternalNoticeLine(line: string): boolean {
     const text = line.trim();
     if (!text) return false;
+    // OpenClaw diagnostics do not change the retained thinking preference.
+    if (/^Thinking level clamped to \S+ for \S+\/\S+ \(requested \S+; preference retained\)\.?$/i.test(text)) return true;
     if (/^↪️?\s*Model Fallback:/i.test(text)) return true;
     if (/Model Fallback:/i.test(text) && /selected model unavailable/i.test(text)) return true;
     if (/当前服务无响应.*备用线路/.test(text)) return true;
@@ -5690,7 +5692,7 @@ ${current}
                     let currentRunState: { isStale: () => boolean } | null = null;
                     let autoReactDispatched = false;
                     const forwardThreshold = Number(config.forwardLongReplyThreshold ?? 0);
-                    const canUseMergedForward = !isGuild && !isGroup && Number.isFinite(forwardThreshold) && forwardThreshold > 0;
+                    const canUseMergedForward = !isGuild && Number.isFinite(forwardThreshold) && forwardThreshold > 0;
                     const unknownBlockBoundaryThreshold = Number.isFinite(forwardThreshold) && forwardThreshold > 0 ? forwardThreshold : 300;
                     const unknownBlockMergeWindowMs = 350;
                     const bufferedFinalTexts: string[] = [];
@@ -5798,7 +5800,7 @@ ${current}
 
                     const sendProcessedText = async (processed: string): Promise<boolean> => {
                         if (currentRunState?.isStale()) return false;
-                        if (canUseMergedForward && processed.length >= forwardThreshold) {
+                        if (canUseMergedForward && processed.length > forwardThreshold) {
                             const sentAsForward = await sendLongTextAsForwardMessage({
                                 client,
                                 groupId: isGroup ? groupId : undefined,
@@ -5851,7 +5853,7 @@ ${current}
                         meta: { phaseLabel: string; reason?: string },
                     ): Promise<boolean> => {
                         if (currentRunState?.isStale() || texts.length === 0) return false;
-                        if (canUseMergedForward && totalLen >= forwardThreshold) {
+                        if (canUseMergedForward && totalLen > forwardThreshold) {
                             const sentAsForward = await sendLongTextAsForwardMessage({
                                 client,
                                 groupId: isGroup ? groupId : undefined,
@@ -5950,10 +5952,7 @@ ${current}
                         }
                         if (payload.text && payload.text.trim()) {
                             const cleanedText = stripInternalNoticeText(payload.text);
-                            if (!cleanedText.trim()) {
-                                return;
-                            }
-                            const processed = await prepareOutgoingText(cleanedText);
+                            const processed = cleanedText.trim() ? await prepareOutgoingText(cleanedText) : "";
                             if (currentRunState?.isStale()) return;
                             if (processed.trim()) {
                                 sawReplyContent = true;
