@@ -12,6 +12,7 @@
 - [2026-03-27 媒体链路与传输模式更新](./2026-03-27-media-transport-update.md)
 - [2026-03-20 默认行为调整](./2026-03-20-default-behavior-update.md)
 - [部署指引（NapCat）](https://github.com/constansino/openclaw_qq/blob/main/deploy/napcat/README.md)
+- [Sub2API 分组模型自动同步（可选）](./sub2api-model-sync.md)
 - [高级能力与完整参数](./advanced.md)
 - [在线文档首页](https://constansino.github.io/openclaw_qq/)
 
