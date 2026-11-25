@@ -16,7 +16,7 @@ import {
     type ReplyPayload,
     applyAccountNameToChannelSection,
     migrateBaseNameToDefaultAccount,
-} from "openclaw/plugin-sdk";
+} from "openclaw/plugin-sdk/core";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
 import { jsonResult } from "openclaw/plugin-sdk/channel-actions";
 import { OneBotClient } from "./client.js";
